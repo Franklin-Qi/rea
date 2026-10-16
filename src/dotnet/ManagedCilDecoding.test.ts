@@ -262,6 +262,11 @@ describe("managed operand extent diagnostics", () => {
       "Instruction ldarg at IL offset 0 leaves method body",
     ],
     [[0x00, 0xfe], 1, "Two-byte CIL opcode at IL offset 1 leaves method body"],
+    [
+      [0xfe, 0x13],
+      1,
+      "Prefix chain at IL offset 0 is missing a following instruction",
+    ],
   ] as const)(
     "reports the instruction and IL offset for tiny IL %j",
     (il, decoded, issue) => {

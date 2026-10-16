@@ -491,6 +491,8 @@ export const decodeInstructions = (
         operand: operand.value,
       });
     }
+    if (issue === null && prefixStart !== null)
+      issue = `Prefix chain at IL offset ${String(prefixStart)} is missing a following instruction`;
   } catch (cause: unknown) {
     if (cause instanceof ManagedReaderFailure) throw cause;
     issue =
