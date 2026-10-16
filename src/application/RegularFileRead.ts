@@ -97,6 +97,8 @@ const withRegularFileOwned = async <Value>(
             !sameRegularFileState(stats, currentPath)
           )
             throw new RegularFileChangedError(path);
+          // Observe cancellation after the last awaited finalization step.
+          signal?.throwIfAborted();
           return value;
         },
       );
