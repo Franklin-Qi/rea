@@ -88,6 +88,12 @@ export type KunaCommandOutcome =
 const message = (cause: unknown): string =>
   cause instanceof Error ? cause.message : String(cause);
 
+/** Prefer the last nonempty stderr line; empty stderr keeps the owned cause. */
+export const kunaFailureDiagnostic = (
+  stderr: string | undefined,
+  cause: unknown,
+): string => stderr?.trim().split("\n").at(-1)?.trim() || message(cause);
+
 /** Preserve the operation's typed failure while attaching descriptor cleanup. */
 export const kunaFileCleanupError = (
   failure: RegularFileCleanupFailure,
@@ -346,7 +352,7 @@ const commandFailure = (
     kind: "failed",
     error: new ProviderAdapterError(KUNA_PROVIDER_ID, operation, {
       ...details,
-      userMessage: `kuna ${subcommand} failed${exitCode === undefined || exitCode === null ? "" : ` with exit code ${String(exitCode)}`}: ${capturedOutput?.stderr.trim().split("\n").at(-1) ?? cause.message}`,
+      userMessage: `kuna ${subcommand} failed${exitCode === undefined || exitCode === null ? "" : ` with exit code ${String(exitCode)}`}: ${kunaFailureDiagnostic(capturedOutput?.stderr, cause)}`,
     }),
   };
 };
